@@ -13,6 +13,12 @@ public class Product {
     private float price;
     @Column(name = "short_desc")
     private String shortDescription;
+    @Column(name = "image")
+    private String imageUri;
+    @Column(name = "thumbnail")
+    private String thumbnailUri;
+    @ManyToOne
+    private ProductType type;
 
     public long getId() {
         return id;
@@ -44,5 +50,21 @@ public class Product {
 
     public void setShortDescription(String shortDescription) {
         this.shortDescription = shortDescription;
+    }
+
+    public String getImageUri() {
+        return imageUri;
+    }
+
+    public void setImageUri(String imageUri) {
+        this.imageUri = imageUri;
+    }
+
+    public String getThumbnailUri() {
+        return thumbnailUri;
+    }
+
+    public void setThumbnailUri(String thumbnailUri) {
+        this.thumbnailUri = thumbnailUri;
     }
 }

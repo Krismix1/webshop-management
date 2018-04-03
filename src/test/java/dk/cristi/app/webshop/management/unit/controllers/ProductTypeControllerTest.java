@@ -47,7 +47,7 @@ public class ProductTypeControllerTest {
 
     @Test
     public void fetchAll() throws Exception {
-        final Collection<ProductTypeVO> productTypeVOs = productTypeController.fetchAll();
+        final Collection<ProductType> productTypeVOs = productTypeController.fetchAll();
         assertEquals(0, productTypeVOs.size());
     }
 

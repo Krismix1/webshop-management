@@ -35,10 +35,8 @@ public class ProductTypeController {
 
     @GetMapping(consumes = {"application/json"}, produces = {"application/json"})
     @ApiOperation(value = "Get all product types.")
-    public Collection<ProductTypeVO> fetchAll() {
-        return productTypeService.fetchAll().stream()
-                .map(ProductTypeService.mapToValueObject())
-                .collect(Collectors.toList());
+    public Collection<ProductType> fetchAll() {
+        return productTypeService.fetchAll();
     }
 
     @GetMapping(value = "/{name}", consumes = {"application/json"}, produces = {"application/json"})

@@ -15,6 +15,8 @@ public class ProductType {
     private String description;
     @OneToMany(mappedBy = "productType")
     private List<ProductTypeSpecification> specifications;
+    @ManyToOne
+    private Category category;
 
     public String getName() {
         return name;
@@ -38,5 +40,17 @@ public class ProductType {
 
     public void setSpecifications(List<ProductTypeSpecification> specifications) {
         this.specifications = specifications;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public long getId() {
+        return id;
     }
 }
