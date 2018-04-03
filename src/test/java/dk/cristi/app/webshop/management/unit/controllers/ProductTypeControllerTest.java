@@ -2,7 +2,6 @@ package dk.cristi.app.webshop.management.unit.controllers;
 
 import dk.cristi.app.webshop.management.controllers.ProductTypeController;
 import dk.cristi.app.webshop.management.controllers.http_exceptions.Http404Exception;
-import dk.cristi.app.webshop.management.models.domain.ProductTypeVO;
 import dk.cristi.app.webshop.management.models.entities.ProductType;
 import dk.cristi.app.webshop.management.services.ProductTypeService;
 import org.junit.Before;
@@ -53,14 +52,14 @@ public class ProductTypeControllerTest {
 
     @Test
     public void fetchOne() {
-        final ProductTypeVO productTypeVO = productTypeController.fetchOne("prod_1");
-        assertNotNull(productTypeVO);
+        final ProductType productType = productTypeController.fetchOne("prod_1");
+        assertNotNull(productType);
     }
 
     @Test
     public void fetchOne_NotFound() {
         try {
-            final ProductTypeVO productTypeVO = productTypeController.fetchOne("prod_2");
+            final ProductType productType = productTypeController.fetchOne("prod_2");
             assertTrue(false);
         } catch (Http404Exception e) {
             assertTrue(true);

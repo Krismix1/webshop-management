@@ -41,19 +41,15 @@ public class ProductTypeController {
 
     @GetMapping(value = "/{name}", consumes = {"application/json"}, produces = {"application/json"})
     @ApiOperation(value = "Get a product type.")
-    public ProductTypeVO fetchOne(@PathVariable("name") String name) {
+    public ProductType fetchOne(@PathVariable("name") String name) {
 
         final Optional<ProductType> productTypeOptional = productTypeService.findByName(name);
-        // map the entity to a VO if it is present
-        // returns an empty Optional otherwise
-        final Optional<ProductTypeVO> productTypeVOOptional = productTypeOptional.map(ProductTypeService.mapToValueObject());
         // return if present, otherwise return a 404
-        return productTypeVOOptional.orElseThrow(Http404Exception::new);
+        return productTypeOptional.orElseThrow(Http404Exception::new);
     }
 
     @PostMapping(consumes = {"application/json"}, produces = {"application/json"})
     @ApiOperation(value = "Create a new product type", notes = "On success, returns the URI for the new created resource")
-    // TODO: 20-Mar-18 Apply validation for the parameter
     public ResponseEntity<?> postProductType(@Valid @RequestBody ProductTypeVO productTypeVO) {
 
         final ProductType productType = new ProductType();

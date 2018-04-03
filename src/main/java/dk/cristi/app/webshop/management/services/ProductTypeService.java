@@ -1,7 +1,5 @@
 package dk.cristi.app.webshop.management.services;
 
-import dk.cristi.app.webshop.management.models.domain.ProductTypeSpecificationVO;
-import dk.cristi.app.webshop.management.models.domain.ProductTypeVO;
 import dk.cristi.app.webshop.management.models.entities.ProductType;
 import dk.cristi.app.webshop.management.models.entities.ProductTypeSpecification;
 import dk.cristi.app.webshop.management.models.entities.ProductTypeSpecificationKey;
@@ -16,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,21 +51,5 @@ public class ProductTypeService {
 
     public Optional<ProductType> findByName(@NonNull String name) {
         return Optional.ofNullable(productTypeRepository.findByName(name));
-    }
-
-    public static Function<ProductType, ProductTypeVO> mapToValueObject() {
-        return productType -> {
-            final ProductTypeSpecificationVO[] specifications = productType.getSpecifications()
-                    .stream()
-                    .map(specification -> {
-                        final String value = specification.getValue();
-                        final String keyName = specification.getProductTypeSpecificationKey().getKeyName();
-                        final String type = specification.getProductTypeSpecificationKey().getType();
-
-                        return new ProductTypeSpecificationVO(keyName, value, type);
-                    }).toArray(ProductTypeSpecificationVO[]::new);
-
-            return new ProductTypeVO(productType.getName(), productType.getDescription(), specifications);
-        };
     }
 }

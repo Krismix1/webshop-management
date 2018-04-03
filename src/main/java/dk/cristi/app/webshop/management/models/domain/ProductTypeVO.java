@@ -4,7 +4,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class ProductTypeVO {
-    // TODO: 20-Mar-18 Add validation annotations
     @NotBlank
     private String name;
     @NotBlank
