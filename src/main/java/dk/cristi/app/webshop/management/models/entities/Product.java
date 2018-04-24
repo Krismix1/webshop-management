@@ -15,8 +15,6 @@ public class Product {
     private String shortDescription;
     @Column(name = "image")
     private String imageUri;
-    @Column(name = "thumbnail")
-    private String thumbnailUri;
     @ManyToOne
     private ProductType type;
 
@@ -54,14 +52,6 @@ public class Product {
 
     public void setImageUri(String imageUri) {
         this.imageUri = imageUri;
-    }
-
-    public String getThumbnailUri() {
-        return thumbnailUri;
-    }
-
-    public void setThumbnailUri(String thumbnailUri) {
-        this.thumbnailUri = thumbnailUri;
     }
 
     public ProductType getType() {

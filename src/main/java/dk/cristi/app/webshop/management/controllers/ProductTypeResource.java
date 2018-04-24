@@ -24,12 +24,12 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping("/api/products/types")
 @Api(tags = {"product-types"})
-public class ProductTypeController {
+public class ProductTypeResource {
 
     private final ProductTypeService productTypeService;
 
     @Autowired
-    public ProductTypeController(ProductTypeService productTypeService) {
+    public ProductTypeResource(ProductTypeService productTypeService) {
         this.productTypeService = productTypeService;
     }
 

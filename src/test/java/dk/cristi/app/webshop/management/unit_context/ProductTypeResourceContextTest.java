@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class ProductTypeControllerContextTest {
+public class ProductTypeResourceContextTest {
 
     @MockBean
     ProductTypeService productTypeService;

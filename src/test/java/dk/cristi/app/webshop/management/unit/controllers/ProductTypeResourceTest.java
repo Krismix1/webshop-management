@@ -1,6 +1,6 @@
 package dk.cristi.app.webshop.management.unit.controllers;
 
-import dk.cristi.app.webshop.management.controllers.ProductTypeController;
+import dk.cristi.app.webshop.management.controllers.ProductTypeResource;
 import dk.cristi.app.webshop.management.controllers.http_exceptions.Http404Exception;
 import dk.cristi.app.webshop.management.models.entities.ProductType;
 import dk.cristi.app.webshop.management.services.ProductTypeService;
@@ -22,13 +22,13 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @RunWith(MockitoJUnitRunner.class)
 // https://dzone.com/articles/spring-boot-unit-testing-and-mocking-with-mockito
-public class ProductTypeControllerTest {
+public class ProductTypeResourceTest {
 
     @Mock
     ProductTypeService productTypeService;
 
     @InjectMocks
-    ProductTypeController productTypeController;
+    ProductTypeResource productTypeResource;
 
     @Before
     public void loadData() {
@@ -46,20 +46,20 @@ public class ProductTypeControllerTest {
 
     @Test
     public void fetchAll() throws Exception {
-        final Collection<ProductType> productTypeVOs = productTypeController.fetchAll();
+        final Collection<ProductType> productTypeVOs = productTypeResource.fetchAll();
         assertEquals(0, productTypeVOs.size());
     }
 
     @Test
     public void fetchOne() {
-        final ProductType productType = productTypeController.fetchOne("prod_1");
+        final ProductType productType = productTypeResource.fetchOne("prod_1");
         assertNotNull(productType);
     }
 
     @Test
     public void fetchOne_NotFound() {
         try {
-            final ProductType productType = productTypeController.fetchOne("prod_2");
+            final ProductType productType = productTypeResource.fetchOne("prod_2");
             assertTrue(false);
         } catch (Http404Exception e) {
             assertTrue(true);

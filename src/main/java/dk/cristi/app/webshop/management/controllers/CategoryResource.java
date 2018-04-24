@@ -16,12 +16,12 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/api/categories")
 @Api(tags = {"categories"})
-public class CategoryController {
+public class CategoryResource {
 
     private final CategoryService categoryService;
 
     @Autowired
-    public CategoryController(CategoryService categoryService) {
+    public CategoryResource(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
