@@ -1,4 +1,4 @@
-package dk.cristi.app.webshop.management.configs;
+package dk.cristi.app.webshop.management.security;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
