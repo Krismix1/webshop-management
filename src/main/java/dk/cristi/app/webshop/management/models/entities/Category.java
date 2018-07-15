@@ -12,6 +12,15 @@ public class Category {
     @NotBlank(message = "Category name must contain at least 1 non whitespace character.")
     private String name;
 
+    /** Needed to create objects for testing*/
+    public Category(long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public long getId() {
         return id;
     }

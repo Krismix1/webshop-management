@@ -1,5 +1,7 @@
 package dk.cristi.app.webshop.management.models.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Table(name = "prod_type_specs")
@@ -13,6 +15,7 @@ public class ProductTypeSpecification {
     @OneToOne
     private ProductTypeSpecificationKey productTypeSpecificationKey;
     @ManyToOne
+    @JsonIgnore
     private ProductType productType;
     private int position; // The position of the specification in the view
 

@@ -6,6 +6,7 @@ import dk.cristi.app.webshop.management.services.CategoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,13 +26,13 @@ public class CategoryResource {
         this.categoryService = categoryService;
     }
 
-    @GetMapping(produces = {"application/json"})
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Get all categories.")
     public Collection<Category> fetchAll() {
         return categoryService.fetchAll();
     }
 
-    @GetMapping(path = "{id}", produces = {"application/json"})
+    @GetMapping(path = "{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Get one category by id.")
     public Category fetchOne(@PathVariable("id") long id) {
         return categoryService.fetchOne(id).orElseThrow(Http404Exception::new);

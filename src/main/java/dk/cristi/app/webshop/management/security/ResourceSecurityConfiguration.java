@@ -12,5 +12,7 @@ public class ResourceSecurityConfiguration extends ResourceServerConfigurerAdapt
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.POST).authenticated();
+        http.headers().frameOptions().sameOrigin();
+        http.authorizeRequests().antMatchers("/h2-console/**").permitAll();
     }
 }
