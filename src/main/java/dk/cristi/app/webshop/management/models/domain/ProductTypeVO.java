@@ -5,11 +5,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 public class ProductTypeVO {
-    @NotBlank
+    @NotBlank(message = "Product name can't be blank")
     private String name;
-    @NotBlank
+    @NotBlank(message = "Product description can't be blank")
     private String description;
-    @NotNull
+    @NotNull(message = "Product type specification must be supplied")
     private ProductTypeSpecificationVO[] specifications;
     @Positive(message = "Category id must be a positive integer")
     private long categoryId;

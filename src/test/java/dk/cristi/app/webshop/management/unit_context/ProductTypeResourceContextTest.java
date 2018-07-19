@@ -3,6 +3,7 @@ package dk.cristi.app.webshop.management.unit_context;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.cristi.app.webshop.management.helpers.DummyTestData;
 import dk.cristi.app.webshop.management.helpers.UriEncoder;
+import dk.cristi.app.webshop.management.models.domain.ProductTypeSpecificationVO;
 import dk.cristi.app.webshop.management.models.domain.ProductTypeVO;
 import dk.cristi.app.webshop.management.models.entities.ProductType;
 import dk.cristi.app.webshop.management.services.CategoryService;
@@ -313,9 +314,110 @@ public class ProductTypeResourceContextTest {
                 .save(any(ProductType.class));
     }
 
-    //    @Test
+    @Test
     public void postProductType_InvalidData() throws Exception {
-        fail("Not implemented");
+
+        OAuth2AccessToken auth = createToken("william", "hispass");
+        // If auth is null, that only means that the test used an non-existent user
+        String authToken = auth.getValue();
+
+        // product name can't be null
+        ProductTypeVO postData = new ProductTypeVO(null, "some descr", 1, new ProductTypeSpecificationVO[0]);
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details", CoreMatchers.containsString("Product name can't be blank")));
+
+        // product name can't be empty
+        postData = new ProductTypeVO("", "some descr", 1, new ProductTypeSpecificationVO[0]);
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details", CoreMatchers.containsString("Product name can't be blank")));
+
+        // product name can't be blank
+        postData = new ProductTypeVO("\t\n \r", "some descr", 1, new ProductTypeSpecificationVO[0]);
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details", CoreMatchers.containsString("Product name can't be blank")));
+
+        // product description can't be null
+        postData = new ProductTypeVO("some name", null, 1, new ProductTypeSpecificationVO[0]);
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details", CoreMatchers.containsString("Product description can't be blank")));
+
+        // product description can't be empty
+        postData = new ProductTypeVO("some name", "", 1, new ProductTypeSpecificationVO[0]);
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details", CoreMatchers.containsString("Product description can't be blank")));
+
+        // product description can't be blank
+        postData = new ProductTypeVO("some name", "\t\n \r", 1, new ProductTypeSpecificationVO[0]);
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details", CoreMatchers.containsString("Product description can't be blank")));
+
+        // category id can't be negative
+        postData = new ProductTypeVO("some name", "descr", -1, new ProductTypeSpecificationVO[0]);
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details", CoreMatchers.containsString("Category id must be a positive integer")));
+
+        // category id can't be 0
+        postData = new ProductTypeVO("some name", "descr", 0, new ProductTypeSpecificationVO[0]);
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details", CoreMatchers.containsString("Category id must be a positive integer")));
+
+        // product type specifications can't be null
+        postData = new ProductTypeVO("some name", "descr", 1, null);
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details", CoreMatchers.containsString("Product type specification must be supplied")));
+
+        // whole object is invalid, shows all invalid fields
+        postData = new ProductTypeVO("", null, -10, null);
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.details", CoreMatchers.allOf(
+                        CoreMatchers.containsString("Product name can't be blank"),
+                        CoreMatchers.containsString("Product description can't be blank"),
+                        CoreMatchers.containsString("Category id must be a positive integer"),
+                        CoreMatchers.containsString("Product type specification must be supplied")
+                )));
+
+        verify(productTypeService, times(0))
+                .save(any(ProductType.class));
     }
 
     @Test
