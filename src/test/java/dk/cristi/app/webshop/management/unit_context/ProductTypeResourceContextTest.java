@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,7 +31,6 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 
@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 //@WebAppConfiguration
 public class ProductTypeResourceContextTest {
-
+    // FIXME: 15-Jul-18 When CategoryService can't find category and the ProductTypeResource throws a 404, no body seems to be sent during test (just during test)
     @MockBean
     ProductTypeService productTypeService;
     @MockBean
@@ -57,9 +57,13 @@ public class ProductTypeResourceContextTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    /** The URI prefix of the controller*/
+    /**
+     * The URI prefix of the controller
+     */
     private static final String CONTROLLER_URI = "/api/products/types/";
-    /** A name used to mock the {@link dk.cristi.app.webshop.management.services.ProductTypeService#findByName(String)} to not find any resource.*/
+    /**
+     * A name used to mock the {@link dk.cristi.app.webshop.management.services.ProductTypeService#findByName(String)} to not find any resource.
+     */
     private static final String MISSING_PRODUCT_TYPE_NAME = "some really random name";
 
     @Before
@@ -74,6 +78,9 @@ public class ProductTypeResourceContextTest {
 
         when(productTypeService.findByName(MISSING_PRODUCT_TYPE_NAME))
                 .thenReturn(Optional.empty());
+
+        when(productTypeService.save(DummyTestData.PRODUCT_TYPE_FROM_VO()))
+                .thenReturn(DummyTestData.PRODUCT_TYPE_FROM_VO());
 
         when(categoryService.fetchOne(DummyTestData.CATEGORY_1().getId()))
                 .thenReturn(Optional.of(DummyTestData.CATEGORY_1()));
@@ -141,7 +148,7 @@ public class ProductTypeResourceContextTest {
     //endregion
 
     @Test
-    public void fetchAll() throws Exception {
+    public void fetchAll_NoAccept_ProducesJsonUtf8() throws Exception {
         mockMvc.perform(get(CONTROLLER_URI))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
@@ -152,7 +159,40 @@ public class ProductTypeResourceContextTest {
     }
 
     @Test
-    public void fetchOne() throws Exception {
+    public void fetchAll_AcceptAll_ProducesJsonUtf8() throws Exception {
+        mockMvc.perform(get(CONTROLLER_URI).accept(MediaType.ALL))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(1)));
+
+        verify(productTypeService, times(1))
+                .fetchAll();
+    }
+
+    @Test
+    public void fetchAll_AcceptsJson_ProducesJsonUtf8() throws Exception {
+        mockMvc.perform(get(CONTROLLER_URI))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(1)));
+
+        verify(productTypeService, times(1))
+                .fetchAll();
+    }
+
+    @Test
+    public void fetchAll_AcceptsXml_CanNotProduce_DefaultsToJson() throws Exception {
+        mockMvc.perform(get(CONTROLLER_URI).accept(MediaType.APPLICATION_XML))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(1)));
+
+        verify(productTypeService, times(1))
+                .fetchAll();
+    }
+
+    @Test
+    public void fetchOne_NoAccept_ProducesJsonUtf8() throws Exception {
         String name = DummyTestData.PRODUCT_TYPE().getName();
         String descr = DummyTestData.PRODUCT_TYPE().getDescription();
 
@@ -162,6 +202,64 @@ public class ProductTypeResourceContextTest {
                 .andExpect(jsonPath("$.name").value(name))
                 .andExpect(jsonPath("$.description").value(descr))
                 .andExpect(jsonPath("$.specifications").isArray());
+
+        verify(productTypeService, times(1))
+                .findByName(name);
+    }
+
+    @Test
+    public void fetchOne_AcceptsAll_ProducesJsonUtf8() throws Exception {
+        String name = DummyTestData.PRODUCT_TYPE().getName();
+        String descr = DummyTestData.PRODUCT_TYPE().getDescription();
+
+        mockMvc.perform(get(CONTROLLER_URI + name).accept(MediaType.ALL))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.name").value(name))
+                .andExpect(jsonPath("$.description").value(descr))
+                .andExpect(jsonPath("$.specifications").isArray());
+
+        verify(productTypeService, times(1))
+                .findByName(name);
+    }
+
+    @Test
+    public void fetchOne_AcceptsJson_ProducesJsonUtf8() throws Exception {
+        String name = DummyTestData.PRODUCT_TYPE().getName();
+        String descr = DummyTestData.PRODUCT_TYPE().getDescription();
+
+        mockMvc.perform(get(CONTROLLER_URI + name).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.name").value(name))
+                .andExpect(jsonPath("$.description").value(descr))
+                .andExpect(jsonPath("$.specifications").isArray());
+
+        verify(productTypeService, times(1))
+                .findByName(name);
+
+        // can also accept JSON UTF-8
+        mockMvc.perform(get(CONTROLLER_URI + name).accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.name").value(name))
+                .andExpect(jsonPath("$.description").value(descr))
+                .andExpect(jsonPath("$.specifications").isArray());
+
+        verify(productTypeService, times(2))
+                .findByName(name);
+    }
+
+    @Test
+    public void fetchOne_AcceptsXml_CanNotProduce_DefaultsToJson() throws Exception {
+        String name = DummyTestData.PRODUCT_TYPE().getName();
+
+        // can not produce XML
+        mockMvc.perform(get(CONTROLLER_URI + name).accept(MediaType.APPLICATION_XML))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.name").value(name));
+
         verify(productTypeService, times(1))
                 .findByName(name);
     }
@@ -207,20 +305,88 @@ public class ProductTypeResourceContextTest {
         mockMvc.perform(post(CONTROLLER_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(postData))
-                .header("Authorization", "Bearer " + authToken)
-                .accept(MediaType.APPLICATION_JSON))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
                 .andExpect(status().isCreated())
-                .andExpect(header().exists("Location"))
-                .andExpect(header().string("Location", CoreMatchers.containsString(locationUri)));
+                .andExpect(header().string(HttpHeaders.LOCATION, CoreMatchers.containsString(locationUri)));
+
+        verify(productTypeService, times(1))
+                .save(any(ProductType.class));
     }
 
-    @Test
+    //    @Test
     public void postProductType_InvalidData() throws Exception {
         fail("Not implemented");
     }
 
     @Test
-    public void postProductType_AcceptsJson() throws Exception {
-        fail("Not implemented");
+    public void postProductType_ConsumesJson() throws Exception {
+        ProductTypeVO postData = DummyTestData.PRODUCT_TYPE_VO();
+
+        OAuth2AccessToken auth = createToken("william", "hispass");
+        // If auth is null, that only means that the test used an non-existent user
+        String authToken = auth.getValue();
+
+        // can accept JSON
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isCreated())
+                .andExpect(header().doesNotExist(HttpHeaders.CONTENT_TYPE));
+
+        // can accept JSON UTF-8
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isCreated())
+                .andExpect(header().doesNotExist(HttpHeaders.CONTENT_TYPE));
+    }
+
+    @Test
+    public void postProductType_CanNotConsumeXml() throws Exception {
+        ProductTypeVO postData = DummyTestData.PRODUCT_TYPE_VO();
+
+        OAuth2AccessToken auth = createToken("william", "hispass");
+        // If auth is null, that only means that the test used an non-existent user
+        String authToken = auth.getValue();
+
+        // can't accept XML
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_XML_VALUE)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isUnsupportedMediaType());
+    }
+
+    @Test
+    public void postProductType_CanNotConsumeAll() throws Exception {
+        ProductTypeVO postData = DummyTestData.PRODUCT_TYPE_VO();
+
+        OAuth2AccessToken auth = createToken("william", "hispass");
+        // If auth is null, that only means that the test used an non-existent user
+        String authToken = auth.getValue();
+
+        // can't consume */*
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.ALL)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isUnsupportedMediaType());
+    }
+
+    @Test
+    public void postProductType_NoContentType() throws Exception {
+        ProductTypeVO postData = DummyTestData.PRODUCT_TYPE_VO();
+
+        OAuth2AccessToken auth = createToken("william", "hispass");
+        // If auth is null, that only means that the test used an non-existent user
+        String authToken = auth.getValue();
+
+        // no content type
+        mockMvc.perform(post(CONTROLLER_URI)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isUnsupportedMediaType());
     }
 }

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @RestController
-@RequestMapping("/api/products/types")
+@RequestMapping(value = "/api/products/types", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
 @Api(tags = {"product-types"})
 public class ProductTypeResource {
 
@@ -38,13 +38,13 @@ public class ProductTypeResource {
         this.categoryService = categoryService;
     }
 
-    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping
     @ApiOperation(value = "Get all product types.")
     public Collection<ProductType> fetchAll() {
         return productTypeService.fetchAll();
     }
 
-    @GetMapping(value = "/{name}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/{name}")
     @ApiOperation(value = "Get a product type.")
     public ProductType fetchOne(@PathVariable("name") String name) {
 
@@ -53,7 +53,7 @@ public class ProductTypeResource {
         return productTypeOptional.orElseThrow(Http404Exception::new);
     }
 
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE}, produces = {})
     @ApiOperation(value = "Create a new product type", notes = "On success, returns the URI for the new created resource")
     public ResponseEntity<?> postProductType(@Valid @RequestBody ProductTypeVO productTypeVO) {
 
@@ -82,10 +82,10 @@ public class ProductTypeResource {
 
         productType.setSpecifications(productTypeSpecifications);
 
-        productTypeService.save(productType);
+        ProductType savedProductType = productTypeService.save(productType);
 
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest().path(
-                "/{name}").buildAndExpand(productType.getName()).toUri();
+                "/{name}").buildAndExpand(savedProductType.getName()).toUri();
 
         return ResponseEntity.created(location).build();
     }

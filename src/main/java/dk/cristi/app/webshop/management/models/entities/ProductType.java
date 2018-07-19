@@ -2,6 +2,7 @@ package dk.cristi.app.webshop.management.models.entities;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Table(name = "prod_types")
 @Entity
@@ -52,5 +53,19 @@ public class ProductType {
 
     public long getId() {
         return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductType that = (ProductType) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(category, that.category);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, category);
     }
 }
