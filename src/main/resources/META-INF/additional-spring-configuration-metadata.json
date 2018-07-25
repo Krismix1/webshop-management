@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "auth.signing.key",
+      "type": "java.lang.String",
+      "description": "JWT key to use for creating tokens. Must be the same as on the auth server."
+    }
+  ]
+}

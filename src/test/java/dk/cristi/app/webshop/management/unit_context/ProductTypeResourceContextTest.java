@@ -2,7 +2,6 @@ package dk.cristi.app.webshop.management.unit_context;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.cristi.app.webshop.management.helpers.DummyTestData;
-import dk.cristi.app.webshop.management.helpers.UriEncoder;
 import dk.cristi.app.webshop.management.models.domain.ProductTypeSpecificationVO;
 import dk.cristi.app.webshop.management.models.domain.ProductTypeVO;
 import dk.cristi.app.webshop.management.models.entities.ProductType;
@@ -32,6 +31,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.util.UriUtils;
 
 import java.util.*;
 
@@ -47,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 //@WebAppConfiguration
 public class ProductTypeResourceContextTest {
+
     // FIXME: 15-Jul-18 When CategoryService can't find category and the ProductTypeResource throws a 404, no body seems to be sent during test (just during test)
     @MockBean
     ProductTypeService productTypeService;
@@ -66,6 +67,8 @@ public class ProductTypeResourceContextTest {
      * A name used to mock the {@link dk.cristi.app.webshop.management.services.ProductTypeService#findByName(String)} to not find any resource.
      */
     private static final String MISSING_PRODUCT_TYPE_NAME = "some really random name";
+    /** Default URI encoding */
+    private static final String UTF_8 = "UTF-8";
 
     @Before
     public void setup() {
@@ -302,7 +305,7 @@ public class ProductTypeResourceContextTest {
         // If auth is null, that only means that the test used an non-existent user
         String authToken = auth.getValue();
 
-        String locationUri = CONTROLLER_URI + UriEncoder.encode(postData.getName());
+        String locationUri = CONTROLLER_URI + UriUtils.encode(postData.getName(), UTF_8);
         mockMvc.perform(post(CONTROLLER_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(postData))
@@ -490,5 +493,36 @@ public class ProductTypeResourceContextTest {
                 .content(objectMapper.writeValueAsString(postData))
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
                 .andExpect(status().isUnsupportedMediaType());
+    }
+
+    @Test
+    public void canRetrieveNewlyCreatedProductType() throws Exception {
+        ProductTypeVO postData = DummyTestData.PRODUCT_TYPE_VO();
+        when(productTypeService.findByName(postData.getName()))
+                .thenReturn(Optional.of(DummyTestData.PRODUCT_TYPE_FROM_VO()));
+
+        OAuth2AccessToken auth = createToken("william", "hispass");
+        // If auth is null, that only means that the test used an non-existent user
+        String authToken = auth.getValue();
+
+        mockMvc.perform(post(CONTROLLER_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(postData))
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken))
+                .andExpect(status().isCreated())
+                .andDo(result -> {
+                    String newResource = result.getResponse().getHeader(HttpHeaders.LOCATION);
+                    newResource = UriUtils.decode(newResource, UTF_8);
+                    mockMvc.perform(get(newResource))
+                            .andExpect(status().isOk())
+                            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                            .andExpect(jsonPath("$.name").value(postData.getName()))
+                            // TODO: 23-Jul-18 Assert that category is not null and stuff like that
+                            .andExpect(jsonPath("$.description").value(postData.getDescription()))
+                            .andExpect(jsonPath("$.specifications").isArray());
+
+                    verify(productTypeService, times(1))
+                            .findByName(postData.getName());
+                });
     }
 }

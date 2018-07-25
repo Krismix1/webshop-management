@@ -1,18 +1,19 @@
 package dk.cristi.app.webshop.management.security;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 
 @Configuration
-public class ResourceSecurityConfiguration extends ResourceServerConfigurerAdapter {
+@Profile("dev")
+public class DevResourceSecurityConfiguration extends ResourceServerConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers(HttpMethod.POST).authenticated();
-
-        http.authorizeRequests().antMatchers("/actuator/**").hasRole("ADMIN");
+        // Allow accessing H2 console
+        http.headers().frameOptions().sameOrigin();
+        http.authorizeRequests().antMatchers("/h2-console/**").permitAll();
     }
 }

@@ -14,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -55,7 +55,7 @@ public class ProductTypeResource {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE}, produces = {})
     @ApiOperation(value = "Create a new product type", notes = "On success, returns the URI for the new created resource")
-    public ResponseEntity<?> postProductType(@Valid @RequestBody ProductTypeVO productTypeVO) {
+    public ResponseEntity<?> postProductType(@Valid @RequestBody ProductTypeVO productTypeVO, UriComponentsBuilder uriComponentsBuilder) {
 
         Category category = categoryService.fetchOne(productTypeVO.getCategoryId())
                 .orElseThrow(() -> new Http404Exception(String.format("Category with id '%d' not found.", productTypeVO.getCategoryId())));
@@ -84,9 +84,8 @@ public class ProductTypeResource {
 
         ProductType savedProductType = productTypeService.save(productType);
 
-        final URI location = ServletUriComponentsBuilder.fromCurrentRequest().path(
-                "/{name}").buildAndExpand(savedProductType.getName()).toUri();
+        UriComponents uriComponents = uriComponentsBuilder.path("/api/products/types/{name}").buildAndExpand(savedProductType.getName());
 
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(uriComponents.toUri()).build();
     }
 }

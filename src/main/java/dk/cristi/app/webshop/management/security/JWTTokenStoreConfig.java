@@ -1,6 +1,6 @@
 package dk.cristi.app.webshop.management.security;
 
-import dk.cristi.app.webshop.management.configs.ServiceConfig;
+import dk.cristi.app.webshop.management.configs.WebShopManagementServiceConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 public class JWTTokenStoreConfig {
 
     @Autowired
-    private ServiceConfig serviceConfig;
+    private WebShopManagementServiceConfig serviceConfig;
 
     //JWT
     @Bean
