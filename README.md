@@ -12,7 +12,7 @@
 - `src/` Source code, application resources and tests
   - `main/`
     - `docker/` files necessary to deploy the service as a Docker container
-    - `java/dk/cristi/app/webshop/management`
+    - `java/dk/cristi/app/webshop/management/`
       - `configs/` global configs for the project
       - `controllers/` classes specialized in handling requests; each endpoint/route is associated with a controller method, which normally would authenticate the user, validate the scopes, validate any input data, perform operation on resources (through service), and return the appropriate server status based on the outcome
       - `models/` representation of database tables as classes
@@ -22,13 +22,15 @@
     - `resources/` application properties & SQL specific per runtime profile
       - `META-INF/` internal Java meta directory (custom properties)
   - `tests/` test code for the project
-    - `java/` test source code
+    - `java/dk/cristi/app/webshop/management/` test source code
       - `helpers/` utility code
       - `integration/` test integration of service with other services (auth, config, gateway, eureka)
       - `unit/` unit tests, no application context
         - `controllers/` controllers tests
+        - `services/` services tests
       - `unit_context/` unit tests with application context
         - `controllers/` controllers tests
+        - `services/` services tests
     - `resources/` resources specific for tests (usually application properties & SQL)
 
 
@@ -98,11 +100,21 @@ The following HTTP server states are used:
     - [ ] ProductResource
     - [x] ProductTypeResource
   - Services
+    - [ ] ProductTypeService
   - Models
   - Repositories
   - Configs
 - [ ] Unit with context
-- [ ] Integration
+  - Controllers
+    - [ ] CategoryResource
+    - [ ] ProductResource
+    - [x] ProductTypeResource
+  - Services
+    - [ ] ProductTypeService
+  - Models
+  - Repositories
+  - Configs
+- [ ] Integration tests
 - ...
 
 

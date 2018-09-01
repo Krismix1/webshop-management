@@ -4,35 +4,58 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
-@Table(name = "prod_type_specs")
+@Table(name = "prod_type_spec_keys")
 @Entity
-public class ProductTypeSpecification {
+public class ProductTypeSpecificationKey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(name = "name", length = 32)
+    private String name;
+    @Column(nullable = false, length = 8)
+    private String type;
+    @Column(name = "descr")
+    private String description;
     @Column(name = "value", length = 64)
-    private String value;
-    @OneToOne
-    private ProductTypeSpecificationKey productTypeSpecificationKey;
+    private String defaultValue;
     @ManyToOne
     @JsonIgnore
     private ProductType productType;
-    private int position; // The position of the specification in the view
 
-    public String getValue() {
-        return value;
+    public long getId() {
+        return id;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public ProductTypeSpecificationKey getProductTypeSpecificationKey() {
-        return productTypeSpecificationKey;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public void setProductTypeSpecificationKey(ProductTypeSpecificationKey productTypeSpecificationKey) {
-        this.productTypeSpecificationKey = productTypeSpecificationKey;
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     public ProductType getProductType() {
@@ -41,13 +64,5 @@ public class ProductTypeSpecification {
 
     public void setProductType(ProductType productType) {
         this.productType = productType;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
     }
 }

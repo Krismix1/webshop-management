@@ -35,7 +35,7 @@ public class ProductTypeService {
     }
 
     @Transactional
-    public ProductType save(ProductType productType) {
+    public ProductType save(@NonNull ProductType productType) {
         // Save the keys to the database
         final List<ProductTypeSpecificationKey> keys = productType.getSpecifications()
                 .stream()
@@ -51,5 +51,9 @@ public class ProductTypeService {
 
     public Optional<ProductType> findByName(@NonNull String name) {
         return Optional.ofNullable(productTypeRepository.findByName(name));
+    }
+
+    public Optional<ProductType> findById(long id) {
+        return productTypeRepository.findById(id);
     }
 }

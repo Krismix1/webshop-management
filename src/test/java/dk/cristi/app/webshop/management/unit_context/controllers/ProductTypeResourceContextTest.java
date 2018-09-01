@@ -1,4 +1,4 @@
-package dk.cristi.app.webshop.management.unit_context;
+package dk.cristi.app.webshop.management.unit_context.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.cristi.app.webshop.management.helpers.DummyTestData;
