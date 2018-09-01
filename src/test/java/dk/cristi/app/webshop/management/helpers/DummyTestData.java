@@ -12,7 +12,8 @@ public class DummyTestData {
         return new ProductTypeSpecificationVO(
                 "spec 1",
                 "5",
-                "int"
+                "int",
+                ""
         );
     }
 
@@ -20,7 +21,8 @@ public class DummyTestData {
         return new ProductTypeSpecificationVO(
                 "spec 2",
                 "true",
-                "bool"
+                "bool",
+                ""
         );
     }
 

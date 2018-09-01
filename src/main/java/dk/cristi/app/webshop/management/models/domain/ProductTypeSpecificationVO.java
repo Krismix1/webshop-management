@@ -1,5 +1,7 @@
 package dk.cristi.app.webshop.management.models.domain;
 
+import dk.cristi.app.webshop.management.validators.IsNullOrIsNotBlankConstraint;
+
 import javax.validation.constraints.NotBlank;
 
 public class ProductTypeSpecificationVO {
@@ -7,30 +9,37 @@ public class ProductTypeSpecificationVO {
     @NotBlank
     private String keyName;
     @NotBlank
-    private String value;
+    private String defaultValue;
     @NotBlank
     private String keyType;
+    @IsNullOrIsNotBlankConstraint
+    private String description;
 
     // @formatter:off
     // Needed for Jackson Deserializer
     protected ProductTypeSpecificationVO(){}
     // @formatter:on
 
-    public ProductTypeSpecificationVO(String keyName, String value, String keyType) {
+    public ProductTypeSpecificationVO(String keyName, String defaultValue, String keyType, String description) {
         this.keyName = keyName;
-        this.value = value;
+        this.defaultValue = defaultValue;
         this.keyType = keyType;
+        this.description = description;
     }
 
     public String getKeyName() {
         return keyName;
     }
 
-    public String getValue() {
-        return value;
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
     public String getKeyType() {
         return keyType;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

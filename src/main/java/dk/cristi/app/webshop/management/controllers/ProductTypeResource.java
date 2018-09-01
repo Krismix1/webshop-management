@@ -5,7 +5,6 @@ import dk.cristi.app.webshop.management.models.domain.ProductTypeVO;
 import dk.cristi.app.webshop.management.models.entities.Category;
 import dk.cristi.app.webshop.management.models.entities.ProductType;
 import dk.cristi.app.webshop.management.models.entities.ProductTypeSpecification;
-import dk.cristi.app.webshop.management.models.entities.ProductTypeSpecificationKey;
 import dk.cristi.app.webshop.management.services.CategoryService;
 import dk.cristi.app.webshop.management.services.ProductTypeService;
 import io.swagger.annotations.Api;
@@ -54,7 +53,7 @@ public class ProductTypeResource {
     }
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE}, produces = {})
-    @ApiOperation(value = "Create a new product type", notes = "On success, returns the URI for the new created resource")
+    @ApiOperation(value = "Create a new product type.", notes = "On success, returns the URI for the new created resource")
     public ResponseEntity<?> postProductType(@Valid @RequestBody ProductTypeVO productTypeVO, UriComponentsBuilder uriComponentsBuilder) {
 
         Category category = categoryService.fetchOne(productTypeVO.getCategoryId())
@@ -67,13 +66,12 @@ public class ProductTypeResource {
 
         final List<ProductTypeSpecification> productTypeSpecifications = Stream.of(productTypeVO.getSpecifications())
                 .map(specification -> {
-                    ProductTypeSpecificationKey key = new ProductTypeSpecificationKey();
-                    key.setKeyName(specification.getKeyName());
-                    key.setType(specification.getKeyType());
 
                     ProductTypeSpecification productTypeSpecification = new ProductTypeSpecification();
-                    productTypeSpecification.setValue(specification.getValue());
-                    productTypeSpecification.setProductTypeSpecificationKey(key);
+                    productTypeSpecification.setName(specification.getKeyName());
+                    productTypeSpecification.setType(specification.getKeyType());
+                    productTypeSpecification.setDefaultValue(specification.getDefaultValue());
+                    productTypeSpecification.setDescription(specification.getDescription());
                     productTypeSpecification.setProductType(productType);
 
                     return productTypeSpecification;

@@ -1,12 +1,13 @@
 package dk.cristi.app.webshop.management.models.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import dk.cristi.app.webshop.management.converters.NullStringToEmptyConverter;
 
 import javax.persistence.*;
 
 @Table(name = "prod_type_spec_keys")
 @Entity
-public class ProductTypeSpecificationKey {
+public class ProductTypeSpecification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -15,6 +16,7 @@ public class ProductTypeSpecificationKey {
     @Column(nullable = false, length = 8)
     private String type;
     @Column(name = "descr")
+    @Convert(converter = NullStringToEmptyConverter.class)
     private String description;
     @Column(name = "value", length = 64)
     private String defaultValue;

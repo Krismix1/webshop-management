@@ -15,11 +15,21 @@ public class WebShopManagementConfigProperties {
      */
     private List<String> allowedOrigins = new ArrayList<>();
 
+    private String validationConstraintsIsNullOrIsNotBlankConstraintMessage;
+
     public List<String> getAllowedOrigins() {
         return this.allowedOrigins;
     }
 
     public void setAllowedOrigins(List<String> allowedOrigins) {
         this.allowedOrigins = allowedOrigins;
+    }
+
+    public String getValidationConstraintsIsNullOrIsNotBlankConstraintMessage() {
+        return validationConstraintsIsNullOrIsNotBlankConstraintMessage;
+    }
+
+    public void setValidationConstraintsIsNullOrIsNotBlankConstraintMessage(String validationConstraintsIsNullOrIsNotBlankConstraintMessage) {
+        this.validationConstraintsIsNullOrIsNotBlankConstraintMessage = validationConstraintsIsNullOrIsNotBlankConstraintMessage;
     }
 }

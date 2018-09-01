@@ -3,13 +3,11 @@ package dk.cristi.app.webshop.management.unit.services;
 import dk.cristi.app.webshop.management.helpers.DummyTestData;
 import dk.cristi.app.webshop.management.models.entities.ProductType;
 import dk.cristi.app.webshop.management.repositories.ProductTypeRepository;
-import dk.cristi.app.webshop.management.repositories.ProductTypeSpecificationKeyRepository;
 import dk.cristi.app.webshop.management.repositories.ProductTypeSpecificationRepository;
 import dk.cristi.app.webshop.management.services.ProductTypeService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -22,7 +20,8 @@ import java.util.Optional;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.fail;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -31,8 +30,6 @@ public class ProductTypeServiceTest {
     private ProductTypeRepository productTypeRepository;
     @Mock
     private ProductTypeSpecificationRepository productTypeSpecificationRepository;
-    @Mock
-    private ProductTypeSpecificationKeyRepository productTypeSpecificationKeyRepository;
 
     @InjectMocks
     private ProductTypeService productTypeService;
@@ -83,7 +80,7 @@ public class ProductTypeServiceTest {
         assertNotNull("Should not be null", optionalProductType);
         ProductType productType = optionalProductType.get();
         assertNotNull("Should not be null", productType);
-        assertEquals("Should be the same object", DummyTestData.PRODUCT_TYPE_FROM_VO(), productType);
+        assertEquals("Should be equal objects", DummyTestData.PRODUCT_TYPE_FROM_VO(), productType);
     }
 
     @Test
@@ -114,7 +111,7 @@ public class ProductTypeServiceTest {
         assertNotNull("Should not be null", optionalProductType);
         ProductType productType = optionalProductType.get();
         assertNotNull("Should not be null", productType);
-        assertEquals("Should be the same object", DummyTestData.PRODUCT_TYPE_FROM_VO(), productType);
+        assertEquals("Should be equal objects", DummyTestData.PRODUCT_TYPE_FROM_VO(), productType);
         assertEquals("Should have the same id", 1, productType.getId());
     }
 
